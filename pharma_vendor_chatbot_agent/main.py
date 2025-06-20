@@ -1,5 +1,7 @@
 import os
 import json
+import re
+import time
 from register_update import update_json
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -33,49 +35,62 @@ def search_medicine(text_request):
         data = json.load(json_file)
     vectorizer_embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", task_type="SEMANTIC_SIMILARITY")
     vector_store = InMemoryVectorStore.from_texts(data, vectorizer_embeddings)
-    response = vector_store.similarity_search(text_request, k=1)
-    print(type(response))
-    for doc in response:
-        print(type(doc.page_content))
-        print(type(doc.page_content["info"]))
-    #     string_response  = (f"{doc.page_content["info"]["description"]}, "
-    #                         f"{doc.page_content["info"]["usos"]}, "
-    #                         f"{doc.page_content["info"]["precio_unitario"]}, "
-    #                         f"{doc.page_content["info"]["cantidad"]}, "
-    #                         f"{doc.page_content["info"]["fabricante"]}, "
-    #                         f"{doc.page_content["info"]["precio"]}, "
-    #                         f"{doc.page_content["info"]["nombre"]}")
-    # return string_response
+    docs = vector_store.similarity_search(text_request, k=1)
+    for document in docs:
+        return document.page_content
 
-# configure basic variables
 tools = [search_medicine]
 model = init_chat_model("gemini-2.0-flash", model_provider="google_genai", temperature=0)
 memory = MemorySaver()
-#agent_executor = create_react_agent(model, tools, checkpointer=memory)
 models_with_tools = model.bind_tools([search_medicine])
-
 def agent_chat(request_client):
-    messages = [
-    SystemMessage("Your are a pharmacist and seller of medicines try to sell medicines to the customers helping with information about medicines"),
-    HumanMessage(request_client),
-]
+        messages = [
+        SystemMessage("Your are a pharmacist and seller of medicines try to sell medicines to the customers helping with information about medicines be clear, output max 50 characters"),
+        HumanMessage(request_client),
+    ]
 
-    agent_executor = create_react_agent(model, tools, checkpointer=memory)
-   
-    config = {"configurable": {"thread_id": "abc123"}}
-    for step in agent_executor.stream(
-        {"messages": messages}, config, stream_mode="values"
-    ):
-        step["messages"][-1]
-        print(step["messages"][-1])
-
+        agent_executor = create_react_agent(model, tools, checkpointer=memory)
     
+        config = {"configurable": {"thread_id": "abc123"}}
+        for step in agent_executor.stream(
+            {"messages": messages}, config, stream_mode="values"
+        ):
+            step["messages"][-1]
+            print(step["messages"][-1])
+            return step["messages"][-1]
+
+a = ""
+request_client = ""
+while request_client != "salir":
+    request_client = input("What medicine are you looking for?")
+    # configure basic variables
+   
+    a = agent_chat(request_client)
+    
+    time.sleep(4)
+    print(a)
+    # def agent_chat(request_client):
+    #     messages = [
+    #     SystemMessage("Your are a pharmacist and seller of medicines try to sell medicines to the customers helping with information about medicines be clear, output max 50 characters"),
+    #     HumanMessage(request_client),
+    # ]
+
+    #     agent_executor = create_react_agent(model, tools, checkpointer=memory)
+    
+    #     config = {"configurable": {"thread_id": "abc123"}}
+    #     for step in agent_executor.stream(
+    #         {"messages": messages}, config, stream_mode="values"
+    #     ):
+    #         step["messages"][-1]
+    #         print(step["messages"][-1])
+
+        
 
 
 
 
-# if __name__ == "__main__":
-#     question = input("What medicine are you looking for?")
+    # if __name__ == "__main__":
+#question = input("What medicine are you looking for?")
 #     update_json()
 #     search_medicine()
-search_medicine("Acetaminofén tiene?")
+#agent_chat(question)
