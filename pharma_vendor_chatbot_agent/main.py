@@ -11,7 +11,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
 
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyBlnimG4d7ptomNftBGYPgG3yqIEppWChA"
+
 def sale_done():
     "tool to register a sale done"
     #tomara los id que se vendierion y lo pasaran
