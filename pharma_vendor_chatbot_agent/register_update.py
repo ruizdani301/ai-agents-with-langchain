@@ -1,5 +1,7 @@
 import json
-from conection import cursor, conn
+from conection import get_conection
+
+conn = get_conection()
 
 
 def update_json():
@@ -15,20 +17,9 @@ def update_json():
     """
 
     try:
+        cursor = conn.cursor()
         cursor.execute("SELECT * FROM medicament")
         results = cursor.fetchall()
-        # register_list = [
-        #     {"id": register[0],
-        #      "info": {
-        #                 "nombre": register[1],
-        #                 "fabricante": register[2],
-        #                 "precio":register[3],
-        #                 "description": register[4],
-        #                 "usos":register[7],
-        #                 "precio_unitario": register[8],
-        #                 "cantidad": register[9]
-        #                 }} for register in results
-        #     ]
         register_to_vector = []
         for register in results:
             string_register = (
@@ -47,3 +38,7 @@ def update_json():
     except conn.Error as e:
         print(f"Error al ejecutar la consulta: {e}")
         exit()
+    finally:
+        if conn:
+            conn.close()
+            print("Conexión cerrada.")
