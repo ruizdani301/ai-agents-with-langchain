@@ -4,7 +4,7 @@ from langchain_core.tools import tool
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_core.vectorstores import InMemoryVectorStore
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyBlnimG4d7ptomNftBGYPgG3yqIEppWChA"
+
 @tool
 def search_medicine(text_request):
     """
