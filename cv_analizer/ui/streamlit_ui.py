@@ -29,12 +29,12 @@ def main():
     col_entrada, col_resultado = st.columns([1, 1], gap="large")
     
     with col_entrada:
-        procesar_entrada()
+        input_process()
     
     with col_resultado:
-        mostrar_area_resultados()
+        show_results_area()
 
-def procesar_entrada():
+def input_process():
     """Maneja la entrada de datos del usuario"""
     
     st.header("📑 Datos de Entrada")
@@ -98,7 +98,7 @@ def procesar_entrada():
     st.session_state['descripcion_puesto'] = descripcion_puesto
     st.session_state['analizar'] = analizar
 
-def mostrar_area_resultados():
+def show_results_area():
     """Muestra el área de resultados del análisis"""
     
     st.header("📊 Resultado del Análisis")
@@ -115,7 +115,7 @@ def mostrar_area_resultados():
             st.error("⚠️ Por favor proporciona una descripción detallada del puesto")
             return
         
-        procesar_analisis(archivo_cv, descripcion_puesto)
+        process_analysis(archivo_cv, descripcion_puesto)
     else:
         st.info("""
         👆 **Instrucciones:**
@@ -131,7 +131,7 @@ def mostrar_area_resultados():
         - Incluye tanto requisitos obligatorios como deseables
         """)
 
-def procesar_analisis(archivo_cv, descripcion_puesto):
+def process_analysis(archivo_cv, descripcion_puesto):
     """Procesa el análisis completo del CV"""
     
     with st.spinner("🔄 Procesando currículum..."):
@@ -161,9 +161,9 @@ def procesar_analisis(archivo_cv, descripcion_puesto):
         progress_bar.empty()
         status_text.empty()
         
-        mostrar_resultados(resultado)
+        show_results(resultado)
 
-def mostrar_resultados(resultado: CVAnalysiModel):
+def show_results(resultado: CVAnalysiModel):
     """Muestra los resultados del análisis de manera estructurada y profesional"""
     
     st.subheader("🎯 Evaluación Principal")
